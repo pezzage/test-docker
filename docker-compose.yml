@@ -1,0 +1,43 @@
+version: "3.7"
+services:
+  default-service:
+    build:
+      context: .
+      target: default                        # default tag in Dockerfile
+    container_name: default-service
+    restart: always
+  apache-service-1:
+    build: 
+      context: .
+      target: service-2
+    container_name: apache-service-1
+    restart: always
+  apache-service-2:
+    build: 
+      context: .
+      target: service-2
+    container_name: apache-service-2
+    ports:
+    - "8282:80"
+    expose:
+    - "8282"
+    restart: always
+  haproxy:
+    build: 
+      context: .
+      target: haproxy
+    container_name: haproxy
+    volumes:
+    - ./haproxy:/usr/local/etc/haproxy
+    depends_on:
+    - default-service
+    - apache-service-1
+    - apache-service-2
+    ports:
+    - "8080:80"
+    expose:
+    - "8080"
+    restart: always
+           
+
+        
